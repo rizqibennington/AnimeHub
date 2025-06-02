@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "CineAnimeHub",
-    "slug": "CineAnimeHub",
+    "name": "AnimeHub",
+    "slug": "AnimeHub",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
