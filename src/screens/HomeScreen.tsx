@@ -40,15 +40,14 @@ const HomeScreen: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      // Load different anime categories in parallel
-      const [topResponse, popularResponse, seasonalResponse] = await Promise.all([
-        AnimeService.getTopAnime(1),
-        AnimeService.getAnimeByRanking(1, 'bypopularity'),
-        AnimeService.getSeasonalAnime(1),
-      ]);
-
+      // Load different anime categories sequentially to respect rate limits
+      const topResponse = await AnimeService.getTopAnime(1);
       setTopAnime(topResponse.data.slice(0, 10));
+
+      const popularResponse = await AnimeService.getAnimeByRanking(1, 'bypopularity');
       setPopularAnime(popularResponse.data.slice(0, 10));
+
+      const seasonalResponse = await AnimeService.getSeasonalAnime(1);
       setSeasonalAnime(seasonalResponse.data.slice(0, 10));
     } catch (err: any) {
       console.error('Error loading home data:', err);
@@ -151,12 +150,17 @@ const HomeScreen: React.FC = () => {
 
       {/* Quick Access Categories */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Browse Categories</Text>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Browse Categories</Text>
+        </View>
         <View style={styles.categoriesGrid}>
           <TouchableOpacity
             style={styles.categoryCard}
             onPress={() => navigateToAnimeList('airing')}
           >
+            <View style={styles.categoryIcon}>
+              <Text style={styles.categoryEmoji}>📺</Text>
+            </View>
             <Text style={styles.categoryText}>Currently Airing</Text>
           </TouchableOpacity>
 
@@ -164,6 +168,9 @@ const HomeScreen: React.FC = () => {
             style={styles.categoryCard}
             onPress={() => navigateToAnimeList('upcoming')}
           >
+            <View style={styles.categoryIcon}>
+              <Text style={styles.categoryEmoji}>🔜</Text>
+            </View>
             <Text style={styles.categoryText}>Upcoming Anime</Text>
           </TouchableOpacity>
 
@@ -171,6 +178,9 @@ const HomeScreen: React.FC = () => {
             style={styles.categoryCard}
             onPress={() => navigateToAnimeList('movie')}
           >
+            <View style={styles.categoryIcon}>
+              <Text style={styles.categoryEmoji}>🎬</Text>
+            </View>
             <Text style={styles.categoryText}>Anime Movies</Text>
           </TouchableOpacity>
 
@@ -178,6 +188,9 @@ const HomeScreen: React.FC = () => {
             style={styles.categoryCard}
             onPress={() => navigation.navigate('Genres')}
           >
+            <View style={styles.categoryIcon}>
+              <Text style={styles.categoryEmoji}>🏷️</Text>
+            </View>
             <Text style={styles.categoryText}>Browse by Genre</Text>
           </TouchableOpacity>
         </View>
@@ -223,17 +236,29 @@ const styles = StyleSheet.create({
   categoryCard: {
     width: '48%',
     backgroundColor: '#1a1a1a',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
+    padding: 20,
+    borderRadius: 16,
+    marginBottom: 16,
     borderWidth: 1,
     borderColor: '#333',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 100,
+  },
+  categoryIcon: {
+    marginBottom: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  categoryEmoji: {
+    fontSize: 32,
   },
   categoryText: {
     color: '#fff',
     fontSize: 14,
     fontWeight: '600',
     textAlign: 'center',
+    lineHeight: 18,
   },
 });
 

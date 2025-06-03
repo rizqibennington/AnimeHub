@@ -9,6 +9,9 @@ import HomeScreen from '../screens/HomeScreen';
 import SearchScreen from '../screens/SearchScreen';
 import AnimeDetailsScreen from '../screens/AnimeDetailsScreen';
 import AnimeListScreen from '../screens/AnimeListScreen';
+import SeasonalScreen from '../screens/SeasonalScreen';
+import RankingsScreen from '../screens/RankingsScreen';
+import GenreScreen from '../screens/GenreScreen';
 
 import { RootStackParamList } from '../types';
 
@@ -68,16 +71,14 @@ const TabNavigator = () => {
       />
       <Tab.Screen
         name="Rankings"
-        component={AnimeListScreen}
-        initialParams={{ category: 'top_rated' }}
+        component={RankingsScreen}
         options={{
           title: 'Rankings',
         }}
       />
       <Tab.Screen
         name="Seasonal"
-        component={AnimeListScreen}
-        initialParams={{ category: 'seasonal' }}
+        component={SeasonalScreen}
         options={{
           title: 'Seasonal',
         }}
@@ -134,7 +135,7 @@ const AppNavigator = () => {
         {/* Additional Screens */}
         <Stack.Screen
           name="Genres"
-          component={AnimeListScreen}
+          component={GenreScreen}
           options={{
             title: 'Browse by Genre',
             headerBackTitleVisible: false,

@@ -21,7 +21,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   onChangeText,
   onSubmit,
   onClear,
-  placeholder = 'Search movies and anime...',
+  placeholder = 'Search anime...',
   autoFocus = false,
 }) => {
   const handleClear = () => {
@@ -61,9 +61,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    backgroundColor: '#000',
+    flex: 1,
   },
   searchContainer: {
     flexDirection: 'row',

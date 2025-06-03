@@ -57,31 +57,41 @@ export const jikanClient = createHttpClient(API_CONFIG.JIKAN.BASE_URL);
 
 // Rate limiting for Jikan API
 let lastJikanRequest = 0;
-const JIKAN_RATE_LIMIT_MS = 1000 / API_CONFIG.JIKAN.RATE_LIMIT;
+const JIKAN_RATE_LIMIT_MS = 1000; // 1 second between requests to be safe
 
 jikanClient.interceptors.request.use(async (config) => {
   const now = Date.now();
   const timeSinceLastRequest = now - lastJikanRequest;
-  
+
   if (timeSinceLastRequest < JIKAN_RATE_LIMIT_MS) {
     const delay = JIKAN_RATE_LIMIT_MS - timeSinceLastRequest;
+    console.log(`Rate limiting: waiting ${delay}ms before next request`);
     await new Promise(resolve => setTimeout(resolve, delay));
   }
-  
+
   lastJikanRequest = Date.now();
   return config;
 });
 
-// Generic API request function
+// Generic API request function with retry for rate limiting
 export const apiRequest = async <T>(
   client: AxiosInstance,
-  config: AxiosRequestConfig
+  config: AxiosRequestConfig,
+  retries: number = 2
 ): Promise<T> => {
   try {
     const response = await client.request<T>(config);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error('API request failed:', error);
+
+    // Retry on rate limit error
+    if (error.response?.status === 429 && retries > 0) {
+      console.log(`Rate limited, retrying in 2 seconds... (${retries} retries left)`);
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      return apiRequest<T>(client, config, retries - 1);
+    }
+
     throw error;
   }
 };

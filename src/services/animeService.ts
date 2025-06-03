@@ -43,6 +43,15 @@ export class AnimeService {
     });
   }
 
+  // Get upcoming seasonal anime
+  static async getUpcomingSeasonalAnime(page: number = 1): Promise<JikanResponse<Anime>> {
+    return apiRequest<JikanResponse<Anime>>(jikanClient, {
+      method: 'GET',
+      url: ENDPOINTS.UPCOMING_SEASON,
+      params: { page },
+    });
+  }
+
   // Get seasonal anime by year and season
   static async getSeasonalAnimeByYear(
     year: number,
